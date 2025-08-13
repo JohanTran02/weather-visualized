@@ -7,12 +7,12 @@ export const Route = createFileRoute('/weather')({
 
 function RouteComponent() {
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+    <MapContainer center={[59.334591, 18.063240]} zoom={13} scrollWheelZoom={false}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={[51.505, -0.09]}>
+      <Marker position={[59.334591, 18.063240]}>
         <Popup>
           A pretty CSS3 popup. <br /> Easily customizable.
         </Popup>
