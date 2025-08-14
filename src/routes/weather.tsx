@@ -1,11 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import {
+  useQuery,
+} from '@tanstack/react-query'
+import { getWeatherData } from '@/api/weather'
+
 
 export const Route = createFileRoute('/weather')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  const { data } = useQuery({
+    queryKey: ["weather"],
+    queryFn: () => getWeatherData()
+  });
+
   return (
     <MapContainer center={[59.334591, 18.063240]} zoom={13} scrollWheelZoom={false}>
       <TileLayer
