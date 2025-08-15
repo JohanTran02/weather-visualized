@@ -1,45 +1,75 @@
 import * as v from "valibot"
 
 //Kolla på variants i valibot imorgon
-const PeriodUnion = v.union([v.literal('latest-hour'), v.literal('latest-day'), v.literal('latest-months'), v.literal('corrected-archive')])
+const PeriodUnionSchema = v.union([v.literal('latest-hour'), v.literal('latest-day'), v.literal('latest-months'), v.literal('corrected-archive')])
+const MediaTypesUnion = ['application/atom+xml', 'application/xml', 'application/json', 'text/plain', 'application/vnd.iso.19139+xml'] as const;
 
-export type PeriodUnionInput = v.InferInput<typeof PeriodUnion>;
+export type PeriodUnionInput = v.InferInput<typeof PeriodUnionSchema>;
 
 // ======== PORTAL BASE TYPES ========
 
 // Shared geographic bounding box
-export interface GeoBox {
-    minLatitude: number;
-    minLongitude: number;
-    maxLatitude: number;
-    maxLongitude: number;
-}
+// export interface GeoBox {
+//     minLatitude: number;
+//     minLongitude: number;
+//     maxLatitude: number;
+//     maxLongitude: number;
+// }
+
+const GeoBoxSchema = v.object({
+    minLatitude: v.number(),
+    minLongitude: v.number(),
+    maxLatitude: v.number(),
+    maxLongitude: v.number(),
+});
+
+type GeoBoxType = v.InferInput<typeof GeoBoxSchema>
 
 // A single link with attributes
-export interface LinkType {
-    rel: string;
-    type: string;
-    href: string; // URI Link
-}
+// export interface LinkType {
+//     rel: string;
+//     type: string;
+//     href: string; // URI Link
+// }
+
+const LinkTypeSchema = v.array(v.object({
+    rel: v.string(),
+    type: v.pipe(v.string(), v.check((value) => {
+        return MediaTypesUnion.some(ext => value.endsWith(ext))
+    }, "Must end with a valid media type extension")),
+    href: v.pipe(v.string(), v.url(), v.includes('.se')),
+}));
+
+type LinkType = v.InferInput<typeof LinkTypeSchema>
 
 // Metadata block with optional key and multiple links
-export interface LinksType {
-    key?: string;
-    updated: string; // xs:dateTime → ISO string
-    title: string;
-    summary: string;
-    link?: LinkType[];
-}
+// export interface LinksType {
+//     key?: string;
+//     updated: string; // xs:dateTime → ISO string
+//     title: string;
+//     summary: string;
+//     link?: LinkType[];
+// }
+
+export const LinksTypeSchema = v.array(v.object({
+    key: v.optional(v.string()),
+    updated: v.number(), // xs:dateTime → ISO string
+    title: v.string(),
+    summary: v.string(),
+    link: LinkTypeSchema
+}))
+
+export type LinksType = v.InferInput<typeof LinksTypeSchema>
 
 // LinksType + GeoBox
 export interface GeoLinksType extends LinksType {
-    geoBox: GeoBox;
+    geoBox: GeoBoxType;
 }
 
 // LinksType + unit + GeoBox
 export interface ParameterLinksType extends LinksType {
     unit: string;
-    geoBox: GeoBox;
+    geoBox: GeoBoxType;
 }
 
 // ======== TOP-LEVEL ELEMENTS ========
@@ -61,20 +91,31 @@ export interface Category {
     version?: LinksType[];
 }
 
-export interface Version {
-    key: string;
-    updated: string; // xs:dateTime → ISO string
-    title: string;
-    summary: string;
-    link?: LinkType[];
-    resource?: LinksType[];
-}
+// export interface Version {
+//     key: string;
+//     updated: string; // xs:dateTime → ISO string
+//     title: string;
+//     summary: string;
+//     link?: LinkType[];
+//     resource?: LinksType[];
+// }
 
-// Discriminated union for XML root elements
-export type PortalElement =
-    | (Api & { _type: "api" })
-    | (Category & { _type: "category" })
-    | (Version & { _type: "version" });
+export const VersionSchema = v.object({
+    key: v.string(),
+    updated: v.number(), // xs:dateTime → ISO string
+    title: v.string(),
+    summary: v.string(),
+    link: v.optional(LinkTypeSchema),
+    resource: v.optional(LinksTypeSchema),
+})
+
+export type VersionType = v.InferOutput<typeof VersionSchema>
+
+// // Discriminated union for XML root elements
+// export type PortalElement =
+//     | (Api & { _type: "api" })
+//     | (Category & { _type: "category" })
+//     | (Version & { _type: "version" });
 
 // DONE 
 // ======== METOBS PARAMETER ========
@@ -171,39 +212,51 @@ export interface MetObsPeriod {
 }
 
 // ======== BASIC TYPES ========
-export type MetObsValueType = 'SAMPLING' | 'INTERVAL';
-export type OwnerCategoryType = 'CLIMATE' | 'NATIONAL';
-export type MeasuringStationsType = 'ALL' | 'CORE' | 'ADDITIONAL';
+export const MetObsValueTypeSchema = v.union([v.literal('SAMPLING'), v.literal('INTERVAL')]);
+export type MetObsValueType = v.InferInput<typeof MetObsValueTypeSchema>;
+
+export const OwnerCategoryTypeSchema = v.union([v.literal('CLIMATE'), v.literal('NATIONAL')]);
+export type OwnerCategoryType = v.InferInput<typeof OwnerCategoryTypeSchema>;
+
+export const MeasuringStationsTypeSchema = v.union([v.literal('ALL'), v.literal('CORE'), v.literal('ADDITIONAL')]);
+export type MeasuringStationsType = v.InferInput<typeof MeasuringStationsTypeSchema>;
 
 // ======== TOP-LEVEL METOBS ELEMENTS ========
-
 // Root: API for metobs
-export interface MetObsDataType {
-    updated: string;
-    position?: MetObsPosition,
-    link?: LinkType[];
-    parameter: {
-        key: string;
-        name: string;
-        summary: string;
-        unit: string;
-    }
-    station: {
-        key: string;
-        name: string;
-        owner: string;
-        ownerCategory: OwnerCategoryType;
-        measuringStations: MeasuringStationsType;
-        height: number;
-    }
-    period: {
-        key: string;
-        from: string; //datetime
-        to: string; //datetime
-        summary: string;
-        sampling: string;
-    }
-}
+export const MetObsDataTypeSchema = v.object({
+    updated: v.number(),
+    position: v.array(v.object({
+        from: v.number(),
+        to: v.number(),
+        height: v.number(),
+        latitude: v.number(),
+        longitude: v.number(),
+    })),
+    link: v.optional(LinkTypeSchema),
+    parameter: v.object({
+        key: v.string(),
+        name: v.string(),
+        summary: v.string(),
+        unit: v.string(),
+    }),
+    station: v.object({
+        key: v.string(),
+        name: v.string(),
+        owner: v.string(),
+        ownerCategory: OwnerCategoryTypeSchema,
+        measuringStations: MeasuringStationsTypeSchema,
+        height: v.number(),
+    }),
+    period: v.object({
+        key: v.string(),
+        from: v.number(),
+        to: v.number(),
+        summary: v.string(),
+        sampling: v.string(),
+    }),
+});
+
+export type MetObsDataType = v.InferInput<typeof MetObsDataTypeSchema>;
 
 export interface MetObsSampleData extends MetObsDataType {
     value?: MetObsSampleValueType;

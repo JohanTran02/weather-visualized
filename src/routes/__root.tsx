@@ -53,12 +53,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         content: "weather-visualized is a web application",
       },
     ],
-    links: [
-      {
-        rel: "icon",
-        href: "/favicon.ico",
-      },
-    ],
   }),
 });
 
