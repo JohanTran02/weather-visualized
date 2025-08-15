@@ -1,6 +1,5 @@
 import * as v from "valibot"
 
-//Kolla på variants i valibot imorgon
 const PeriodUnionSchema = v.union([v.literal('latest-hour'), v.literal('latest-day'), v.literal('latest-months'), v.literal('corrected-archive')])
 const MediaTypesUnion = ['application/atom+xml', 'application/xml', 'application/json', 'text/plain', 'application/vnd.iso.19139+xml'] as const;
 
@@ -53,7 +52,7 @@ type LinkType = v.InferInput<typeof LinkTypeSchema>
 
 export const LinksTypeSchema = v.array(v.object({
     key: v.optional(v.string()),
-    updated: v.number(), // xs:dateTime → ISO string
+    updated: v.number(),
     title: v.string(),
     summary: v.string(),
     link: LinkTypeSchema
@@ -102,7 +101,7 @@ export interface Category {
 
 export const VersionSchema = v.object({
     key: v.string(),
-    updated: v.number(), // xs:dateTime → ISO string
+    updated: v.number(),
     title: v.string(),
     summary: v.string(),
     link: v.optional(LinkTypeSchema),
