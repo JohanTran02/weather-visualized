@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -5,7 +6,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeComponent() {
-
   return (
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <div>home</div>
