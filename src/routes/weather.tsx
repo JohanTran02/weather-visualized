@@ -23,12 +23,12 @@ function RouteComponent() {
 
   return (
 
-    <MapContainer center={[data.position[2].latitude, data.position[2].longitude]} zoom={13} scrollWheelZoom={false}>
+    <MapContainer center={[data.position[data.position.length - 1].latitude, data.position[data.position.length - 1].longitude]} zoom={13} scrollWheelZoom={false}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={[data.position[2].latitude, data.position[2].longitude]}>
+      <Marker position={[data.position[data.position.length - 1].latitude, data.position[data.position.length - 1].longitude]}>
         <Popup>
           {`Name: ${data.station.name}`} <br />
           {`Owner: ${data.station.owner}`}
