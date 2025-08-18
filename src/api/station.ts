@@ -1,9 +1,10 @@
 import { MetObsStationSetDataTypeSchema, type MetObsStationSetDataType } from '@/types/station';
 import * as v from 'valibot'
 
-export const getStationSet = async (): Promise<MetObsStationSetDataType> => {
+export const getStationSet = async (parameterId: string): Promise<MetObsStationSetDataType> => {
     try {
-        const response = await fetch('https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station-set/all/period/latest-hour/data.json');
+        if (!parameterId) throw new Error(`Add parameter before`);
+        const response = await fetch(`https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/${parameterId}/station-set/all/period/latest-hour/data.json`);
 
         if (!response.ok) throw new Error(`HTTP error ${response.status}`)
 
