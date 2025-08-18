@@ -11,7 +11,6 @@ export const getParameters = async (): Promise<VersionType> => {
 
         const data = await response.json();
         const result = v.parse(VersionSchema, data)
-        console.log(result);
 
         return result;
     }
