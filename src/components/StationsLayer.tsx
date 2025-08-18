@@ -2,9 +2,25 @@ import {
     useQuery,
 } from '@tanstack/react-query'
 import { getStationSet } from '@/api/station'
-import { CircleMarker, FeatureGroup, Popup, Tooltip } from 'react-leaflet';
+import { FeatureGroup, Marker, Popup, Tooltip } from 'react-leaflet';
 import { unit } from '@/types/unit';
 import MarkerClusterGroup from "react-leaflet-markercluster";
+import L from 'leaflet';
+
+const circleIcon = (color: string, size = 20) => {
+    const iconHTML = document.createElement('div');
+    iconHTML.innerHTML = `<div style="
+      width:${size}px;
+      height:${size}px;
+      border-radius:50%;
+      background:${color};"></div>`;
+
+    return L.divIcon({
+        html: iconHTML,
+        className: "", // important: no default styles
+        iconSize: [size, size],
+    })
+};
 
 
 export function StationsLayer({ parameterId }: { parameterId: string }) {
@@ -18,16 +34,13 @@ export function StationsLayer({ parameterId }: { parameterId: string }) {
     if (status === "pending") return <div>Loading...</div>;
 
     return (
-        <MarkerClusterGroup>
+        <MarkerClusterGroup >
             <FeatureGroup>
                 {data.station?.map((station) =>
                     station.value?.[0]?.value ? (
-                        <CircleMarker key={station.key}
-                            center={[station.latitude, station.longitude]}
-                            radius={10}
-                            fillColor='blue'
-                            fillOpacity={0.4}
-                            pathOptions={{ stroke: false }}>
+                        <Marker key={station.key}
+                            position={[station.latitude, station.longitude]}
+                            icon={circleIcon("blue", 20)}>
                             <Popup>
                                 {`Name: ${station.name}`} <br />
                                 {`Owner: ${station.owner}`}
@@ -35,10 +48,10 @@ export function StationsLayer({ parameterId }: { parameterId: string }) {
                             <Tooltip direction='right' permanent opacity={1}>
                                 {`${station.value?.[0]?.value}${data.parameter?.unit ? unit[data.parameter.unit] : ''}`}
                             </Tooltip>
-                        </CircleMarker>
+                        </Marker>
                     ) : null
                 )}
             </FeatureGroup>
-        </MarkerClusterGroup>
+        </MarkerClusterGroup >
     )
 }
