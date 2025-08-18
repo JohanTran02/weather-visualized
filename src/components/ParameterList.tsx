@@ -4,15 +4,13 @@ import {
 import { getParameters } from '@/api/parameter';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { SelectGroup } from '@radix-ui/react-select';
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 
-export function ParameterList() {
+export function ParameterList({ parameterId, setParameterId }: { parameterId: string, setParameterId: Dispatch<SetStateAction<string>> }) {
     const { data, status } = useQuery({
         queryKey: ["parameters"],
         queryFn: getParameters
     })
-
-    const [selectedValue, setSelectedValue] = useState<string>('')
 
     if (status === "error") return <div>Error</div>
 
@@ -22,15 +20,15 @@ export function ParameterList() {
 
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000]">
             <Select
-                value={selectedValue}
-                onValueChange={(value) => setSelectedValue(value)}>
+                value={parameterId}
+                onValueChange={(value) => setParameterId(value)}>
                 <SelectTrigger className="w-[280px] bg-white">
                     <SelectValue placeholder="Select a parameter" />
                 </SelectTrigger>
                 <SelectContent className="z-[1000]">
                     <SelectGroup>
                         {
-                            data.resource?.map((parameter) => <SelectItem key={parameter.key ? parameter.key : ''} value={parameter.title + parameter.summary}>{parameter.title}</SelectItem>)
+                            data.resource?.map((parameter) => <SelectItem key={parameter.key ? parameter.key : ''} value={parameter.key ? parameter.key : ''}>{parameter.title}</SelectItem>)
                         }
                     </SelectGroup>
                 </SelectContent>
