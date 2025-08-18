@@ -1,7 +1,7 @@
 import * as v from "valibot"
 import { MediaTypesUnion } from "./weather";
 
-const GeoBoxSchema = v.object({
+export const GeoBoxSchema = v.object({
     minLatitude: v.number(),
     minLongitude: v.number(),
     maxLatitude: v.number(),
@@ -23,12 +23,13 @@ export const LinksTypeSchema = v.object({
     updated: v.number(),
     title: v.string(),
     summary: v.string(),
+    unit: v.optional(v.string()),
     link: v.array(LinkTypeSchema)
 });
 
 export type LinksType = v.InferInput<typeof LinksTypeSchema>
 
-export const GeoLinksTypeSchema = v.intersect([v.array(LinksTypeSchema), v.object(GeoBoxSchema.entries)])
+export const GeoLinksTypeSchema = v.object({ ...LinksTypeSchema.entries, geoBox: GeoBoxSchema })
 
 export type GeoLinksType = v.InferInput<typeof GeoLinksTypeSchema>;
 

@@ -1,7 +1,7 @@
 import * as v from "valibot"
-import { GeoLinksTypeSchema, LinksTypeSchema, LinkTypeSchema } from "./generic";
 import { MetObsStationLinksTypeSchema } from "./station";
 import { MetObsValueTypeSchema } from "./weather";
+import { GeoLinksTypeSchema, LinksTypeSchema, LinkTypeSchema } from "./generic";
 
 export const VersionSchema = v.object({
     key: v.string(),
@@ -9,7 +9,7 @@ export const VersionSchema = v.object({
     title: v.string(),
     summary: v.string(),
     link: v.optional(v.array(LinkTypeSchema)),
-    resource: v.optional(GeoLinksTypeSchema),
+    resource: v.optional(v.array(GeoLinksTypeSchema)),
 })
 
 export type VersionType = v.InferOutput<typeof VersionSchema>
