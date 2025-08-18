@@ -23,7 +23,7 @@ export const LinksTypeSchema = v.object({
     updated: v.number(),
     title: v.string(),
     summary: v.string(),
-    link: LinkTypeSchema
+    link: v.array(LinkTypeSchema)
 });
 
 export type LinksType = v.InferInput<typeof LinksTypeSchema>
