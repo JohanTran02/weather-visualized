@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import "../index.css";
+import 'react-leaflet-markercluster/styles'
 
 export interface RouterAppContext { }
 
