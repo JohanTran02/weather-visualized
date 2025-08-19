@@ -28,7 +28,13 @@ export function ParameterList({ parameterId, setParameterId }: { parameterId: st
                 <SelectContent className="z-[1000]">
                     <SelectGroup>
                         {
-                            data.resource?.map((parameter) => <SelectItem key={parameter.key ? parameter.key : ''} value={parameter.key ? parameter.key : ''}>{parameter.title}</SelectItem>)
+                            data.resource?.map((parameter) => {
+                                if (parameter.summary.includes('1 gång/tim'))
+                                    return (
+                                        <SelectItem key={parameter.key ? parameter.key : ''} value={parameter.key ? parameter.key : ''}>{parameter.title}</SelectItem>
+                                    )
+                                return null;
+                            })
                         }
                     </SelectGroup>
                 </SelectContent>
