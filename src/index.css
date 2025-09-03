@@ -17,6 +17,8 @@ body {
   }
 }
 
+.markercluster-map { height: 90vh; }
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

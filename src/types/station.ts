@@ -43,36 +43,40 @@ export const MetObsStationLinksTypeSchema = v.object({
     to: v.number(),
 });
 
+const StationDataTypeSchema = v.object({
+    key: v.string(),
+    name: v.string(),
+    owner: v.string(),
+    ownerCategory: OwnerCategoryTypeSchema,
+    measuringStations: MeasuringStationsTypeSchema,
+    from: v.number(),
+    to: v.number(),
+    height: v.number(),
+    latitude: v.number(),
+    longitude: v.number(),
+    value: v.optional(
+        v.array(v.union([
+            v.object({
+                date: v.number(),
+                value: v.string(),
+                quality: v.string(),
+            }),
+            v.object({
+                from: v.number(),
+                to: v.number(),
+                ref: v.string(),
+                value: v.string(),
+                quality: v.string(),
+            }),
+        ]))
+    ),
+})
+
+export type StationDataType = v.InferInput<typeof StationDataTypeSchema>;
+
 export const MetObsStationSetDataTypeSchema = v.object({
     updated: v.number(),
-    station: v.optional(v.array(v.object({
-        key: v.string(),
-        name: v.string(),
-        owner: v.string(),
-        ownerCategory: OwnerCategoryTypeSchema,
-        measuringStations: MeasuringStationsTypeSchema,
-        from: v.number(),
-        to: v.number(),
-        height: v.number(),
-        latitude: v.number(),
-        longitude: v.number(),
-        value: v.optional(
-            v.array(v.union([
-                v.object({
-                    date: v.number(),
-                    value: v.string(),
-                    quality: v.string(),
-                }),
-                v.object({
-                    from: v.number(),
-                    to: v.number(),
-                    ref: v.string(),
-                    value: v.string(),
-                    quality: v.string(),
-                }),
-            ]))
-        ),
-    }))),
+    station: v.optional(v.array(StationDataTypeSchema)),
     parameter: v.optional(v.object({
         key: v.string(),
         name: v.string(),
