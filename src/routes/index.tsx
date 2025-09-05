@@ -4,7 +4,8 @@ import { StationsLayer } from '@/components/StationsLayer'
 import { ParameterList } from '@/components/ParameterList'
 import { useState } from "react";
 import SheetInfo from "@/components/SheetInfo";
-import type { StationDataType } from "@/types/station";
+import type { StationData } from "@/types/station";
+import type { MetObsValueType } from "@/types/weather";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -12,20 +13,21 @@ export const Route = createFileRoute("/")({
 
 function HomeComponent() {
   const [parameterId, setParameterId] = useState<string>('');
-  const [station, setStation] = useState<StationDataType | null>(null);
+  const [station, setStation] = useState<StationData | null>(null);
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
+  const [samplingValueType, setSamplingValueType] = useState<MetObsValueType>('SAMPLING')
 
   return (
     <div className='relative h-screen w-screen'>
-      <SheetInfo sheetOpen={sheetOpen} setSheetOpen={setSheetOpen} station={station} />
-      <ParameterList parameterId={parameterId} setParameterId={setParameterId} />
+      <SheetInfo sheetOpen={sheetOpen} setSheetOpen={setSheetOpen} station={station} samplingValueType={samplingValueType} />
+      <ParameterList parameterId={parameterId} setParameterId={setParameterId} setSamplingValueType={setSamplingValueType} />
       <MapContainer className="z-0" bounds={[[55, 10], [70, 25]]} zoom={13} scrollWheelZoom={false} zoomControl={false} style={{ height: '100vh', width: '100%' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ZoomControl position="topright" />
-        <StationsLayer parameterId={parameterId} setSheetOpen={setSheetOpen} setStation={setStation} />
+        <StationsLayer parameterId={parameterId} setSheetOpen={setSheetOpen} setStation={setStation} samplingValueType={samplingValueType} />
       </MapContainer>
     </div>
   );

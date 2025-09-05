@@ -7,8 +7,9 @@ import { unit } from '@/types/unit';
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from 'leaflet';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
-import { useActiveStations } from '@/hook/useActiveStations';
-import type { StationDataType } from '@/types/station';
+import { useGetActiveStations } from '@/hook/station';
+import type { StationData } from '@/types/station';
+import type { MetObsValueType } from '@/types/weather';
 
 const circleIcon = (color: string, size = 20) => {
     const iconHTML = document.createElement('div');
@@ -26,14 +27,17 @@ const circleIcon = (color: string, size = 20) => {
 };
 
 // StationsLayer
-export const StationsLayer = ({ parameterId, setSheetOpen, setStation }: { parameterId: string, setSheetOpen: Dispatch<SetStateAction<boolean>>, setStation: Dispatch<SetStateAction<StationDataType | null>> }) => {
+export const StationsLayer = ({ parameterId, setSheetOpen, setStation, samplingValueType }: { parameterId: string, setSheetOpen: Dispatch<SetStateAction<boolean>>, setStation: Dispatch<SetStateAction<StationData | null>>, samplingValueType: MetObsValueType }) => {
     const { data, status } = useQuery({
         queryKey: ["stations", parameterId],
-        queryFn: () => getStationSet(parameterId),
+        queryFn: () => {
+            if (!parameterId) throw new Error(`Add parameter before`);
+            return getStationSet(parameterId)
+        },
         enabled: !!parameterId
     });
 
-    const stations = useActiveStations(data);
+    const stations = useGetActiveStations(data, samplingValueType);
 
     const markers = useMemo(() => {
         if (!stations) return [];

@@ -1,5 +1,5 @@
 import * as v from "valibot"
-import { MetObsStationLinksTypeSchema } from "./station";
+import { MetObsStationSchema } from "./station";
 import { MetObsValueTypeSchema } from "./weather";
 import { GeoLinksTypeSchema, LinksTypeSchema, LinkTypeSchema } from "./generic";
 
@@ -23,5 +23,7 @@ export const MetObsParameterSchema = v.object({
     valueType: MetObsValueTypeSchema,
     link: v.optional(v.array(LinkTypeSchema)),
     stationSet: v.optional(v.array(LinksTypeSchema)),
-    station: v.optional(MetObsStationLinksTypeSchema)
+    station: v.optional(v.array(MetObsStationSchema))
 })
+
+export type MetObsParameter = v.InferOutput<typeof MetObsParameterSchema>
