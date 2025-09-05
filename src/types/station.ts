@@ -2,7 +2,24 @@ import * as v from "valibot"
 import { OwnerCategoryTypeSchema, MeasuringStationsTypeSchema, MetObsPositionSchema } from "./weather";
 import { LinksTypeSchema, LinkTypeSchema } from "./generic";
 
-export type MetObsStationSetDataType = v.InferInput<typeof MetObsStationSetDataTypeSchema>;
+export const MetObsSampleValueTypeSchema = v.object({
+    date: v.number(),
+    value: v.string(),
+    quality: v.string(),
+});
+
+export type MetObsSampleValueType = v.InferOutput<typeof MetObsSampleValueTypeSchema>;
+
+export const MetObsIntervalValueTypeSchema = v.object({
+    from: v.number(),
+    to: v.number(),
+    ref: v.string(),
+    value: v.string(),
+    quality: v.string(),
+});
+
+export type MetObsIntervalValueType = v.InferOutput<typeof MetObsIntervalValueTypeSchema>;
+
 
 export const MetObsStationSetSchema = v.object({
     key: v.string(),
@@ -15,6 +32,8 @@ export const MetObsStationSetSchema = v.object({
 
 export const MetObsStationSchema = v.object({
     key: v.string(),
+    name: v.string(),
+    id: v.number(),
     updated: v.number(),
     title: v.string(),
     owner: v.string(),
@@ -29,21 +48,7 @@ export const MetObsStationSchema = v.object({
     period: v.optional(v.array(LinksTypeSchema)),
 });
 
-export const MetObsStationLinksTypeSchema = v.object({
-    name: v.string(),
-    owner: v.string(),
-    ownerCategory: OwnerCategoryTypeSchema,
-    measuringStations: MeasuringStationsTypeSchema,
-    id: v.number(),
-    latitude: v.number(),
-    longitude: v.number(),
-    height: v.number(),
-    active: v.boolean(),
-    from: v.number(),
-    to: v.number(),
-});
-
-const StationDataTypeSchema = v.object({
+export const StationSamplingSchema = v.object({
     key: v.string(),
     name: v.string(),
     owner: v.string(),
@@ -54,29 +59,37 @@ const StationDataTypeSchema = v.object({
     height: v.number(),
     latitude: v.number(),
     longitude: v.number(),
-    value: v.optional(
-        v.array(v.union([
-            v.object({
-                date: v.number(),
-                value: v.string(),
-                quality: v.string(),
-            }),
-            v.object({
-                from: v.number(),
-                to: v.number(),
-                ref: v.string(),
-                value: v.string(),
-                quality: v.string(),
-            }),
-        ]))
-    ),
+    value: v.optional(v.array(MetObsSampleValueTypeSchema)),
 })
 
-export type StationDataType = v.InferInput<typeof StationDataTypeSchema>;
+export type StationSampling = v.InferOutput<typeof StationSamplingSchema>;
+
+export const StationSamplingArraySchema = v.array(StationSamplingSchema);
+
+export const StationIntervalSchema = v.object({
+    key: v.string(),
+    name: v.string(),
+    owner: v.string(),
+    ownerCategory: OwnerCategoryTypeSchema,
+    measuringStations: MeasuringStationsTypeSchema,
+    from: v.number(),
+    to: v.number(),
+    height: v.number(),
+    latitude: v.number(),
+    longitude: v.number(),
+    value: v.optional(v.array(MetObsIntervalValueTypeSchema)),
+})
+export const StationIntervalArraySchema = v.array(StationIntervalSchema);
+
+export type StationInterval = v.InferOutput<typeof StationIntervalSchema>;
+
+export const StationSchema = v.union([StationSamplingSchema, StationIntervalSchema]);
+
+export type StationData = v.InferOutput<typeof StationSchema>;
 
 export const MetObsStationSetDataTypeSchema = v.object({
     updated: v.number(),
-    station: v.optional(v.array(StationDataTypeSchema)),
+    station: v.optional(v.array(StationSchema)),
     parameter: v.optional(v.object({
         key: v.string(),
         name: v.string(),
@@ -93,3 +106,4 @@ export const MetObsStationSetDataTypeSchema = v.object({
     })),
 });
 
+export type MetObsStationSetDataType = v.InferOutput<typeof MetObsStationSetDataTypeSchema>;

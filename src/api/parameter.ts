@@ -1,16 +1,14 @@
-import { VersionSchema } from '@/types/parameter';
-import { type VersionType } from '@/types/parameter';
+import { MetObsParameterSchema, type MetObsParameter } from '@/types/parameter';
 import * as v from 'valibot'
 
-//Can perhaps create types and use them in the api files?
-export const getParameters = async (): Promise<VersionType> => {
+export const getParameter = async (parameterId: string): Promise<MetObsParameter> => {
     try {
-        const response = await fetch('https://opendata-download-metobs.smhi.se/api/version/1.0/parameter.json');
+        const response = await fetch(`https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/${parameterId}.json`);
 
         if (!response.ok) throw new Error(`HTTP error ${response.status}`)
 
         const data = await response.json();
-        const result = v.parse(VersionSchema, data)
+        const result = v.parse(MetObsParameterSchema, data)
         console.log(result);
 
         return result;

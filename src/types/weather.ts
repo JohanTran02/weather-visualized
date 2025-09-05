@@ -69,18 +69,4 @@ export const MetObsDataTypeSchema = v.object({
     }),
 });
 
-export type MetObsDataType = v.InferInput<typeof MetObsDataTypeSchema>;
-
-export const MetObsSampleValueTypeSchema = v.object({
-    date: v.number(),
-    value: v.string(),
-    quality: v.string(),
-});
-
-export const MetObsIntervalValueTypeSchema = v.object({
-    from: v.number(),
-    to: v.number(),
-    ref: v.string(),
-    value: v.string(),
-    quality: v.string(),
-});
+export type MetObsDataType = v.InferOutput<typeof MetObsDataTypeSchema>;
