@@ -5,22 +5,13 @@ import { getParameters } from '@/api/version';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { SelectGroup } from '@radix-ui/react-select';
 import { type Dispatch, type SetStateAction } from 'react';
-import { getParameter } from '@/api/parameter';
-import type { MetObsValueType } from '@/types/weather';
 
-export function ParameterList({ parameterId, setParameterId, setSamplingValueType }: { parameterId: string, setParameterId: Dispatch<SetStateAction<string>>, setSamplingValueType: Dispatch<SetStateAction<MetObsValueType>> }) {
+export function ParameterList({ parameterId, setParameterId }: {
+    parameterId: string, setParameterId: Dispatch<SetStateAction<string>>,
+}) {
     const parametersQuery = useQuery({
         queryKey: ["parameters"],
         queryFn: getParameters
-    })
-
-    const parameterQuery = useQuery({
-        queryKey: ['parameter', parameterId],
-        queryFn: () => {
-            if (!parameterId) throw new Error(`Add parameter before`);
-            return getParameter(parameterId);
-        },
-        enabled: !!parameterId
     })
 
     if (parametersQuery.isError) return <div>Error</div>
@@ -34,7 +25,6 @@ export function ParameterList({ parameterId, setParameterId, setSamplingValueTyp
                 value={parameterId}
                 onValueChange={(value) => {
                     setParameterId(value)
-                    if (parameterQuery.data) setSamplingValueType(parameterQuery.data.valueType);
                 }
                 }>
                 <SelectTrigger className="w-[280px] bg-white">
@@ -45,9 +35,7 @@ export function ParameterList({ parameterId, setParameterId, setSamplingValueTyp
                         {
                             parametersQuery.data.resource?.map((parameter) => {
                                 if (parameter.summary.includes('1 gång/tim'))
-                                    return (
-                                        <SelectItem key={parameter.key ? parameter.key : ''} value={parameter.key ? parameter.key : ''}>{parameter.title}</SelectItem>
-                                    )
+                                    return <SelectItem value={parameter.key ? parameter.key : ''}>{parameter.title}</SelectItem>
                                 return null;
                             })
                         }

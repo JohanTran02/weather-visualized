@@ -3,13 +3,14 @@ import {
 } from '@tanstack/react-query'
 import { getStationSet } from '@/api/station'
 import { FeatureGroup, Marker, Tooltip } from 'react-leaflet';
-import { unit } from '@/types/unit';
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from 'leaflet';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useGetActiveStations } from '@/hook/station';
 import type { StationData } from '@/types/station';
 import type { MetObsValueType } from '@/types/weather';
+import { convertUnit } from '@/utils/unit';
+import type { UnitKey } from '@/types/unit';
 
 const circleIcon = (color: string, size = 20) => {
     const iconHTML = document.createElement('div');
@@ -27,7 +28,13 @@ const circleIcon = (color: string, size = 20) => {
 };
 
 // StationsLayer
-export const StationsLayer = ({ parameterId, setSheetOpen, setStation, samplingValueType }: { parameterId: string, setSheetOpen: Dispatch<SetStateAction<boolean>>, setStation: Dispatch<SetStateAction<StationData | null>>, samplingValueType: MetObsValueType }) => {
+export const StationsLayer = ({ parameterId, setSheetOpen, setStation, setSamplingValueType, setUnitType }: {
+    parameterId: string,
+    setSheetOpen: Dispatch<SetStateAction<boolean>>,
+    setStation: Dispatch<SetStateAction<StationData | null>>,
+    setSamplingValueType: Dispatch<SetStateAction<MetObsValueType | null>>,
+    setUnitType: Dispatch<SetStateAction<UnitKey | null>>,
+}) => {
     const { data, status } = useQuery({
         queryKey: ["stations", parameterId],
         queryFn: () => {
@@ -37,29 +44,33 @@ export const StationsLayer = ({ parameterId, setSheetOpen, setStation, samplingV
         enabled: !!parameterId
     });
 
-    const stations = useGetActiveStations(data, samplingValueType);
+    const { activeStations, samplingType } = useGetActiveStations(data);
 
     const markers = useMemo(() => {
-        if (!stations) return [];
+        if (!activeStations) return [];
 
-        return stations.map((station) => (
+        return activeStations.map((station) => (
             <Marker
                 key={station.key}
                 position={[station.latitude, station.longitude]}
                 icon={circleIcon("blue", 20)}
                 eventHandlers={{
                     click: () => {
-                        setSheetOpen(true);
+                        if (data?.parameter) {
+                            setUnitType(data.parameter.unit);
+                        }
+                        setSamplingValueType(samplingType);
                         setStation(station);
+                        setSheetOpen(true);
                     }
                 }}
             >
                 <Tooltip direction='right' permanent opacity={1}>
-                    {`${station.value?.[0]?.value}${data?.parameter?.unit ? unit[data.parameter.unit] : ''}`}
+                    {data && convertUnit(station.value[0].value, data.parameter.unit)}
                 </Tooltip>
             </Marker>
         ));
-    }, [stations, setSheetOpen, setStation]);
+    }, [activeStations, setSheetOpen, setStation]);
 
     if (status === "error") return <div>Error</div>;
     if (status === "pending") return <div>Loading...</div>;
