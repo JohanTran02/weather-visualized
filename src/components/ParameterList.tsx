@@ -35,7 +35,7 @@ export function ParameterList({ parameterId, setParameterId }: {
                         {
                             parametersQuery.data.resource?.map((parameter) => {
                                 if (parameter.summary.includes('1 gång/tim'))
-                                    return <SelectItem value={parameter.key ? parameter.key : ''}>{parameter.title}</SelectItem>
+                                    return <SelectItem key={parameter.key + parameter.title} value={parameter.key ? parameter.key : ''}>{parameter.title}</SelectItem>
                                 return null;
                             })
                         }
