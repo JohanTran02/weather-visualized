@@ -1,4 +1,6 @@
-export const unit: { [key: string]: string } = {
+import * as v from "valibot"
+
+export const unit = {
     'meter per sekund': 'm/s',
     'celsius': '°C',
     'watt per kvadratmeter': 'W/m²',
@@ -10,4 +12,14 @@ export const unit: { [key: string]: string } = {
     'procent': '%',
     'sekund': 's',
     'grader': '°'
-}
+} as const;
+
+export const UnitKeySchema = v.picklist(
+    Object.keys(unit) as (keyof typeof unit)[]
+);
+
+export type UnitKey = v.InferOutput<typeof UnitKeySchema>;
+
+export const UnitValueSchema = v.enum(unit);
+
+export type UnitValue = v.InferOutput<typeof UnitValueSchema>;

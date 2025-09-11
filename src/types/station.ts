@@ -1,6 +1,7 @@
 import * as v from "valibot"
 import { OwnerCategoryTypeSchema, MeasuringStationsTypeSchema, MetObsPositionSchema } from "./weather";
 import { LinksTypeSchema, LinkTypeSchema } from "./generic";
+import { UnitKeySchema } from "./unit";
 
 export const MetObsSampleValueTypeSchema = v.object({
     date: v.number(),
@@ -59,7 +60,7 @@ export const StationSamplingSchema = v.object({
     height: v.number(),
     latitude: v.number(),
     longitude: v.number(),
-    value: v.optional(v.array(MetObsSampleValueTypeSchema)),
+    value: v.array(MetObsSampleValueTypeSchema),
 })
 
 export type StationSampling = v.InferOutput<typeof StationSamplingSchema>;
@@ -77,7 +78,7 @@ export const StationIntervalSchema = v.object({
     height: v.number(),
     latitude: v.number(),
     longitude: v.number(),
-    value: v.optional(v.array(MetObsIntervalValueTypeSchema)),
+    value: v.array(MetObsIntervalValueTypeSchema),
 })
 export const StationIntervalArraySchema = v.array(StationIntervalSchema);
 
@@ -90,12 +91,12 @@ export type StationData = v.InferOutput<typeof StationSchema>;
 export const MetObsStationSetDataTypeSchema = v.object({
     updated: v.number(),
     station: v.optional(v.array(StationSchema)),
-    parameter: v.optional(v.object({
+    parameter: v.object({
         key: v.string(),
         name: v.string(),
         summary: v.string(),
-        unit: v.string(),
-    })),
+        unit: UnitKeySchema,
+    }),
     link: v.optional(v.array(LinkTypeSchema)),
     period: v.optional(v.object({
         key: v.string(),

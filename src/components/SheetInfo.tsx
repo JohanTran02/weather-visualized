@@ -1,37 +1,47 @@
-import type { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "./ui/sheet";
 import type { MetObsValueType } from "@/types/weather";
 import type { MetObsIntervalValueType, MetObsSampleValueType, StationData } from "@/types/station";
+import { type UnitKey } from "@/types/unit";
+import { convertUnit } from "@/utils/unit";
 
-function SamplingValuesTable({ values }: { values?: MetObsSampleValueType[] }) {
+function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueType[], unitType: UnitKey | null }) {
     if (!values || values.length === 0) return <p>No sampling data</p>;
+    if (!unitType) return <p>Undefined unit type</p>;
 
     return (
         <ul>
             {values.map(v => (
-                <li key={v.date}>
-                    Date: {v.date}, Value: {v.value}, Quality: {v.quality}
+                <li key={v.date + unitType}>
+                    Date: {v.date}, Value: {convertUnit(v.value, unitType)} , Quality: {v.quality}
                 </li>
             ))}
         </ul>
     );
 }
 
-function IntervalValuesTable({ values }: { values?: MetObsIntervalValueType[] }) {
+function IntervalValuesTable({ values, unitType }: { values?: MetObsIntervalValueType[], unitType: UnitKey | null }) {
     if (!values || values.length === 0) return <p>No interval data</p>;
+    if (!unitType) return <p>Undefined unit type</p>;
 
     return (
         <ul>
             {values.map(v => (
-                <li key={v.from}>
-                    From: {v.from}, To: {v.to}, Ref: {v.ref}, Value: {v.value}, Quality: {v.quality}
+                <li key={v.from + unitType}>
+                    From: {v.from}, To: {v.to}, Ref: {v.ref}, Value: {convertUnit(v.value, unitType)}, Quality: {v.quality}
                 </li>
             ))}
         </ul>
     );
 }
 
-export default function SheetInfo({ sheetOpen, setSheetOpen, station, samplingValueType }: { sheetOpen: boolean, setSheetOpen: Dispatch<SetStateAction<boolean>>, station: StationData | null, samplingValueType: MetObsValueType }) {
+export default function SheetInfo({ sheetOpen, setSheetOpen, station, samplingValueType, unitType }: {
+    sheetOpen: boolean,
+    setSheetOpen: Dispatch<SetStateAction<boolean>>,
+    station: StationData | null,
+    samplingValueType: MetObsValueType | null
+    unitType: UnitKey | null
+}) {
     if (!station || !samplingValueType) return null;
 
     return (
@@ -46,9 +56,9 @@ export default function SheetInfo({ sheetOpen, setSheetOpen, station, samplingVa
                 </SheetHeader>
                 {
                     samplingValueType === "SAMPLING" ? (
-                        <SamplingValuesTable values={station.value as MetObsSampleValueType[]} />
+                        <SamplingValuesTable values={station.value as MetObsSampleValueType[]} unitType={unitType} />
                     ) : (
-                        <IntervalValuesTable values={station.value as MetObsIntervalValueType[]} />
+                        <IntervalValuesTable values={station.value as MetObsIntervalValueType[]} unitType={unitType} />
                     )
                 }
                 <SheetFooter>Based on data from SMHI</SheetFooter>

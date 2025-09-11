@@ -3,6 +3,11 @@ import type { MetObsValueType } from "@/types/weather";
 import { useMemo } from "react";
 import { safeParse } from "valibot";
 
+interface ActiveStationsResult {
+    activeStations: StationData[];
+    samplingType: MetObsValueType | null;
+}
+
 function isSamplingStation(station: StationData[]): station is StationSampling[] {
     const result = safeParse(StationSamplingArraySchema, station);
     return result.success;
@@ -13,16 +18,28 @@ function isIntervalStation(station: StationData[]): station is StationInterval[]
     return result.success;
 }
 
-export function useGetActiveStations(data: MetObsStationSetDataType | undefined, samplingValueType: MetObsValueType): StationData[] {
-    return useMemo(() => {
-        const stations: StationData[] = data?.station ?? [];
+export function useGetActiveStations(
+    data: MetObsStationSetDataType | undefined
+): ActiveStationsResult {
+    const stations = data?.station ?? [];
 
-        if (samplingValueType === "SAMPLING" && isSamplingStation(stations)) {
-            return stations.filter((station) => station.value?.length);
-        } else if (samplingValueType === "INTERVAL" && isIntervalStation(stations)) {
-            return stations.filter((station) => station.value?.length);
+    const { activeStations, samplingType }: ActiveStationsResult = useMemo(() => {
+        if (!stations.length) return { activeStations: [], samplingType: null };
+
+        if (isSamplingStation(stations)) {
+            return {
+                activeStations: stations.filter((s) => s.value?.length),
+                samplingType: "SAMPLING",
+            };
+        } else if (isIntervalStation(stations)) {
+            return {
+                activeStations: stations.filter((s) => s.value?.length),
+                samplingType: "INTERVAL",
+            };
         }
 
-        return [];
-    }, [data, samplingValueType]);
+        return { activeStations: [], samplingType: null };
+    }, [stations]);
+
+    return { activeStations, samplingType };
 }

@@ -1,5 +1,6 @@
 import * as v from "valibot"
 import { LinksTypeSchema, LinkTypeSchema } from "./generic";
+import { UnitKeySchema } from "./unit";
 
 export const PeriodUnionSchema = v.union([v.literal('latest-hour'), v.literal('latest-day'), v.literal('latest-months'), v.literal('corrected-archive'), v.literal('all')])
 export const MediaTypesUnion = ['application/atom+xml', 'application/xml', 'application/json', 'text/plain', 'application/vnd.iso.19139+xml'] as const;
@@ -50,7 +51,7 @@ export const MetObsDataTypeSchema = v.object({
         key: v.string(),
         name: v.string(),
         summary: v.string(),
-        unit: v.string(),
+        unit: UnitKeySchema
     }),
     station: v.object({
         key: v.string(),
