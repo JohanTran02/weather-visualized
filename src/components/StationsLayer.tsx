@@ -68,7 +68,6 @@ export const StationsLayer = ({ parameterId, setSheetOpen, setStation, setSampli
                         setSheetOpen(true);
                     }
                 }}
-
             >
             </Marker>
         ));
