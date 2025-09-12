@@ -21,9 +21,9 @@ function isIntervalStation(station: StationData[]): station is StationInterval[]
 export function useGetActiveStations(
     data: MetObsStationSetDataType | undefined
 ): ActiveStationsResult {
-    const stations = data?.station ?? [];
 
     const { activeStations, samplingType }: ActiveStationsResult = useMemo(() => {
+        const stations = data?.station ?? [];
         if (!stations.length) return { activeStations: [], samplingType: null };
 
         if (isSamplingStation(stations)) {
@@ -39,7 +39,7 @@ export function useGetActiveStations(
         }
 
         return { activeStations: [], samplingType: null };
-    }, [stations]);
+    }, [data?.station]);
 
     return { activeStations, samplingType };
 }
