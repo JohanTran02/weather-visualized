@@ -66,11 +66,11 @@ export const StationsLayer = ({ parameterId, setSheetOpen, setStation, setSampli
                 }}
             >
                 <Tooltip direction='right' permanent opacity={1}>
-                    {data && convertUnit(station.value[0].value, data.parameter.unit)}
+                    {data?.parameter && convertUnit(station.value[0].value, data.parameter.unit)}
                 </Tooltip>
             </Marker>
         ));
-    }, [activeStations, setSheetOpen, setStation]);
+    }, [data?.parameter, samplingType, setSamplingValueType, setUnitType, activeStations, setSheetOpen, setStation]);
 
     if (status === "error") return <div>Error</div>;
     if (status === "pending") return <div>Loading...</div>;
