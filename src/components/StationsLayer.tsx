@@ -2,28 +2,32 @@ import {
     useQuery,
 } from '@tanstack/react-query'
 import { getStationSet } from '@/api/station'
-import { FeatureGroup, Marker, Tooltip } from 'react-leaflet';
+import { FeatureGroup, Marker, } from 'react-leaflet';
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from 'leaflet';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useGetActiveStations } from '@/hook/station';
-import type { StationData } from '@/types/station';
+import { type StationData } from '@/types/station';
 import type { MetObsValueType } from '@/types/weather';
-import { convertUnit } from '@/utils/unit';
 import type { UnitKey } from '@/types/unit';
+import { convertUnit } from '@/utils/unit';
 
-const circleIcon = (color: string, size = 20) => {
-    const iconHTML = document.createElement('div');
-    iconHTML.innerHTML = `<div style="
-      width:${size}px;
-      height:${size}px;
-      border-radius:50%;
-      background:${color};"></div>`;
+const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: number) => {
+    const iconDiv = document.createElement('div');
+    const iconStationName = document.createElement('p');
+    const iconStationValue = document.createElement('p');
+
+
+    iconDiv.className = "flex flex-col items-center justify-center text-nowrap hover:underline font-semibold";
+    iconStationName.textContent = station.name;
+    iconStationValue.textContent = `${unit && convertUnit(station.value[0].value, unit)}`;
+
+    iconDiv.append(iconStationName, iconStationValue);
 
     return L.divIcon({
-        html: iconHTML,
-        className: "", // important: no default styles
-        iconSize: [size, size],
+        html: iconDiv,
+        className: "",
+        iconSize: size ? [size, size] : undefined,
     })
 };
 
@@ -53,7 +57,7 @@ export const StationsLayer = ({ parameterId, setSheetOpen, setStation, setSampli
             <Marker
                 key={station.key}
                 position={[station.latitude, station.longitude]}
-                icon={circleIcon("blue", 20)}
+                icon={circleIcon(station, data?.parameter.unit)}
                 eventHandlers={{
                     click: () => {
                         if (data?.parameter) {
@@ -64,10 +68,8 @@ export const StationsLayer = ({ parameterId, setSheetOpen, setStation, setSampli
                         setSheetOpen(true);
                     }
                 }}
+
             >
-                <Tooltip direction='right' permanent opacity={1}>
-                    {data?.parameter && convertUnit(station.value[0].value, data.parameter.unit)}
-                </Tooltip>
             </Marker>
         ));
     }, [data?.parameter, samplingType, setSamplingValueType, setUnitType, activeStations, setSheetOpen, setStation]);
