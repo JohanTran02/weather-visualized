@@ -6,7 +6,7 @@ import { FeatureGroup, Marker, } from 'react-leaflet';
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from 'leaflet';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
-import { useGetActiveStations } from '@/hook/station';
+import { useGetActiveStationSet } from '@/hook/stationSet';
 import { type StationData } from '@/types/station';
 import type { MetObsValueType } from '@/types/weather';
 import type { UnitKey } from '@/types/unit';
@@ -48,7 +48,7 @@ export const StationsLayer = ({ parameterId, setSheetOpen, setStation, setSampli
         enabled: !!parameterId
     });
 
-    const { activeStations, samplingType } = useGetActiveStations(data);
+    const { activeStations, samplingType } = useGetActiveStationSet(data?.station);
 
     const markers = useMemo(() => {
         if (!activeStations) return [];
