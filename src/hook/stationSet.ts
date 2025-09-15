@@ -1,8 +1,10 @@
-import { MetObsStationSetSampleDataArray } from "@/schemas/station";
+import { MetObsStationSetSampleDataSchema } from "@/schemas/station";
 import type { MetObsValueType } from "@/types/parameter";
 import { type StationData, type MetObsStationSetSampleData } from "@/types/station";
 import { useMemo } from "react";
-import { safeParse } from "valibot";
+import { array, safeParse } from 'valibot'
+
+const MetObsStationSetSampleDataArray = array(MetObsStationSetSampleDataSchema);
 
 interface ActiveStationsResult {
     activeStations: StationData[];
