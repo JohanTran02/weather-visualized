@@ -5,7 +5,7 @@ import { ParameterList } from '@/components/ParameterList'
 import { useState } from "react";
 import SheetInfo from "@/components/SheetInfo";
 import type { StationData } from "@/types/station";
-import type { MetObsValueType } from "@/types/weather";
+import type { MetObsValueType } from "@/types/parameter";
 import type { UnitKey } from "@/types/unit";
 
 export const Route = createFileRoute("/")({

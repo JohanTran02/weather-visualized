@@ -1,9 +1,9 @@
 import { type Dispatch, type SetStateAction } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "./ui/sheet";
-import type { MetObsValueType } from "@/types/weather";
 import type { MetObsIntervalValueType, MetObsSampleValueType, StationData } from "@/types/station";
 import { type UnitKey } from "@/types/unit";
 import { convertUnit } from "@/utils/unit";
+import type { MetObsValueType } from "@/types/parameter";
 
 function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueType[], unitType: UnitKey | null }) {
     if (!values || values.length === 0) return <p>No sampling data</p>;

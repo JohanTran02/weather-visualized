@@ -1,5 +1,6 @@
-import { type StationData, type StationSampling, StationSamplingArraySchema } from "@/types/station";
-import type { MetObsValueType } from "@/types/weather";
+import { MetObsStationSetSampleDataArray } from "@/schemas/station";
+import type { MetObsValueType } from "@/types/parameter";
+import { type StationData, type MetObsStationSetSampleData } from "@/types/station";
 import { useMemo } from "react";
 import { safeParse } from "valibot";
 
@@ -13,8 +14,8 @@ interface NormalizedStationResult {
     samplingType: MetObsValueType | null
 }
 
-function isSamplingStation(station: StationData[] | StationData): station is StationSampling[] {
-    const result = safeParse(StationSamplingArraySchema, station);
+function isSamplingStation(station: StationData[] | StationData): station is MetObsStationSetSampleData[] {
+    const result = safeParse(MetObsStationSetSampleDataArray, station);
     return result.success;
 }
 
