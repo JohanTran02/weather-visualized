@@ -11,7 +11,6 @@ export const VersionSchema = v.object({
     resource: v.array(GeoLinksTypeSchema),
 });
 
-
 export const MetObsParameterSchema = v.object({
     ...SMHIBaseSchema.entries,
     unit: UnitKeySchema,
