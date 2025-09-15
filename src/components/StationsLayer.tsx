@@ -9,8 +9,7 @@ import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useGetActiveStationSet } from '@/hook/stationSet';
 import { type StationData } from '@/types/station';
 import type { MetObsValueType } from '@/types/parameter';
-import type { UnitKey } from '@/types/unit';
-import { convertUnit } from '@/utils/unit';
+import { convertUnit, type UnitKey } from '@/utils/unit';
 
 const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: number) => {
     const iconDiv = document.createElement('div');

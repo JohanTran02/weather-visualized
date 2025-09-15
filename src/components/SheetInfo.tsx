@@ -1,8 +1,7 @@
 import { type Dispatch, type SetStateAction } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "./ui/sheet";
 import type { MetObsIntervalValueType, MetObsSampleValueType, StationData } from "@/types/station";
-import { type UnitKey } from "@/types/unit";
-import { convertUnit } from "@/utils/unit";
+import { convertUnit, type UnitKey } from "@/utils/unit";
 import type { MetObsValueType } from "@/types/parameter";
 
 function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueType[], unitType: UnitKey | null }) {

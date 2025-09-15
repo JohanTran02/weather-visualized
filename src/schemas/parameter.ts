@@ -1,7 +1,7 @@
 import * as v from 'valibot'
 import { SMHIBaseSchema, LinkTypeSchema, LinksTypeSchema, GeoLinksTypeSchema } from './generic';
-import { UnitKeySchema } from './unit';
 import { MetobsStationLinksType } from './station';
+import { UnitKeySchema } from '@/utils/unit';
 
 export const MetObsValueTypeSchema = v.union([v.literal('SAMPLING'), v.literal('INTERVAL')]);
 

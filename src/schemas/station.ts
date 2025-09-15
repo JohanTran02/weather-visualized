@@ -1,6 +1,6 @@
 import * as v from 'valibot'
-import { UnitKeySchema } from './unit';
 import { LinksTypeSchema, LinkTypeSchema, SMHIBaseSchema } from './generic';
+import { UnitKeySchema } from '@/utils/unit';
 
 const SMHIBaseMetObsPosition = v.object({
     height: v.number(),

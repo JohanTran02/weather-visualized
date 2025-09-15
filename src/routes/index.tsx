@@ -6,7 +6,7 @@ import { useState } from "react";
 import SheetInfo from "@/components/SheetInfo";
 import type { StationData } from "@/types/station";
 import type { MetObsValueType } from "@/types/parameter";
-import type { UnitKey } from "@/types/unit";
+import type { UnitKey } from "@/utils/unit";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
