@@ -8,7 +8,7 @@ import L from 'leaflet';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useGetActiveStationSet } from '@/hook/stationSet';
 import { type StationData } from '@/types/station';
-import type { MetObsValueType } from '@/types/weather';
+import type { MetObsValueType } from '@/types/parameter';
 import type { UnitKey } from '@/types/unit';
 import { convertUnit } from '@/utils/unit';
 

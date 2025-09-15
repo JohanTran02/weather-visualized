@@ -1,4 +1,4 @@
-import { VersionSchema } from '@/types/parameter';
+import { VersionSchema } from '@/schemas/parameter';
 import { type VersionType } from '@/types/parameter';
 import * as v from 'valibot'
 

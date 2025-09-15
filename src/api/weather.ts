@@ -1,5 +1,6 @@
+import { MetObsDataTypeSchema } from '@/schemas/station';
+import type { MetObsDataType } from '@/types/station';
 import * as v from 'valibot'
-import { MetObsDataTypeSchema, type MetObsDataType } from '@/types/weather';
 
 export const getWeatherData = async (): Promise<MetObsDataType> => {
     try {

@@ -1,4 +1,6 @@
-import { MetObsStationSetDataTypeSchema, type MetObsStationSetDataType } from '@/types/station';
+
+import { MetObsStationSetDataTypeSchema } from '@/schemas/station';
+import type { MetObsStationSetDataType } from '@/types/station';
 import * as v from 'valibot'
 
 export const getStationSet = async (parameterId: string): Promise<MetObsStationSetDataType> => {

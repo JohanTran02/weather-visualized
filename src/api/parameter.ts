@@ -1,4 +1,5 @@
-import { MetObsParameterSchema, type MetObsParameter } from '@/types/parameter';
+import { MetObsParameterSchema } from '@/schemas/parameter';
+import { type MetObsParameter } from '@/types/parameter';
 import * as v from 'valibot'
 
 export const getParameter = async (parameterId: string): Promise<MetObsParameter> => {
