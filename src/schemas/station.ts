@@ -2,19 +2,13 @@ import * as v from 'valibot'
 import { UnitKeySchema } from './unit';
 import { LinksTypeSchema, LinkTypeSchema, SMHIBaseSchema } from './generic';
 
-export const OwnerCategoryTypeSchema = v.union([v.literal('CLIMATE'), v.literal('NATIONAL')]);
-
-export const MeasuringStationsTypeSchema = v.union([v.literal('ALL'), v.literal('CORE'), v.literal('ADDITIONAL')]);
-
-export const PeriodUnionSchema = v.union([v.literal('latest-hour'), v.literal('latest-day'), v.literal('latest-months'), v.literal('corrected-archive'), v.literal('all')])
-
-export const SMHIBaseMetObsPosition = v.object({
+const SMHIBaseMetObsPosition = v.object({
     height: v.number(),
     latitude: v.number(),
     longitude: v.number(),
 })
 
-export const MetObsPositionSchema = v.object({
+const MetObsPositionSchema = v.object({
     from: v.number(),
     to: v.number(),
     ...SMHIBaseMetObsPosition.entries
@@ -27,8 +21,8 @@ const SMHIBaseMetObsData = v.object({
 
 const SMHIStationOwnerData = v.object({
     owner: v.string(),
-    ownerCategory: OwnerCategoryTypeSchema,
-    measuringStations: MeasuringStationsTypeSchema,
+    ownerCategory: v.union([v.literal('CLIMATE'), v.literal('NATIONAL')]),
+    measuringStations: v.union([v.literal('ALL'), v.literal('CORE'), v.literal('ADDITIONAL')]),
 })
 
 export const MetObsSampleValueTypeSchema = v.object({
@@ -43,6 +37,7 @@ export const MetObsIntervalValueTypeSchema = v.object({
     ref: v.string(),
 });
 
+// https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station-set/all.json 
 export const MetObsStationSetSchema = v.object({
     ...SMHIBaseSchema.entries,
     link: v.array(LinkTypeSchema),
@@ -76,29 +71,28 @@ export const MetobsStationLinksType = v.intersect([
     })
 ])
 
-export const MetObsStationSetSampleDataSchema = v.object({
+const SMHIBaseMetObsStationSet = v.object({
     key: v.string(),
     name: v.string(),
     ...SMHIStationOwnerData.entries,
     from: v.number(),
     to: v.number(),
     ...SMHIBaseMetObsPosition.entries,
-    value: v.array(MetObsSampleValueTypeSchema),
 })
 
-export const MetObsStationSetSampleDataArray = v.array(MetObsStationSetSampleDataSchema);
+export const MetObsStationSetSampleDataSchema = v.intersect([
+    SMHIBaseMetObsStationSet,
+    v.object({
+        value: v.array(MetObsSampleValueTypeSchema),
+    })
+])
 
-export const MetObsStationSetIntervalDataSchema = v.object({
-    key: v.string(),
-    name: v.string(),
-    ...SMHIStationOwnerData.entries,
-    from: v.number(),
-    to: v.number(),
-    ...SMHIBaseMetObsPosition.entries,
-    value: v.array(MetObsIntervalValueTypeSchema),
-})
-
-export const MetObsStationSetIntervalDataArray = v.array(MetObsStationSetIntervalDataSchema);
+export const MetObsStationSetIntervalDataSchema = v.intersect([
+    SMHIBaseMetObsStationSet,
+    v.object({
+        value: v.array(MetObsIntervalValueTypeSchema),
+    })
+])
 
 export const StationSchema = v.union([MetObsStationSetSampleDataSchema, MetObsStationSetIntervalDataSchema]);
 
@@ -131,7 +125,7 @@ export const MetObsStationSetDataTypeSchema = v.object({
 
 // https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station/188790/period/latest-hour/data.json //metObsDataType metObsSampleData or metObsIntervalData
 // Data from a station
-export const MetObsDataTypeSchema = v.object({
+const MetObsDataTypeSchema = v.object({
     ...SMHIBaseStationData.entries,
     station: v.object({
         key: v.string(),
