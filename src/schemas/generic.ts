@@ -1,3 +1,4 @@
+import { UnitKeySchema } from '@/utils/unit';
 import * as v from 'valibot'
 
 export const MediaTypesUnion = ['application/atom+xml', 'application/xml', 'application/json', 'text/plain', 'application/vnd.iso.19139+xml'] as const;
@@ -29,4 +30,10 @@ export const LinksTypeSchema = v.object({
     link: v.array(LinkTypeSchema)
 });
 
-export const GeoLinksTypeSchema = v.object({ ...LinksTypeSchema.entries, geoBox: GeoBoxSchema })
+export const GeoLinksTypeSchema = v.intersect([
+    LinksTypeSchema,
+    v.object({
+        unit: UnitKeySchema,
+        geoBox: GeoBoxSchema
+    })
+]);
