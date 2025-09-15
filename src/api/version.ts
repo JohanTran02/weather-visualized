@@ -1,6 +1,7 @@
 import { VersionSchema } from '@/schemas/parameter';
-import { type VersionType } from '@/types/parameter';
 import * as v from 'valibot'
+
+type VersionType = v.InferOutput<typeof VersionSchema>
 
 export const getParameters = async (): Promise<VersionType> => {
     try {
