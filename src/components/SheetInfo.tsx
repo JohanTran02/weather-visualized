@@ -1,10 +1,10 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { useContext, type Dispatch, type SetStateAction } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "./ui/sheet";
 import type { MetObsIntervalValueType, MetObsSampleValueType, StationData } from "@/types/station";
 import { convertUnit, type UnitKey } from "@/utils/unit";
-import type { MetObsValueType } from "@/types/parameter";
+import { UnitContext } from "@/context/useUnitContext";
 
-function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueType[], unitType: UnitKey | null }) {
+function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueType[], unitType: UnitKey | undefined }) {
     if (!values || values.length === 0) return <p>No sampling data</p>;
     if (!unitType) return <p>Undefined unit type</p>;
 
@@ -19,7 +19,7 @@ function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueT
     );
 }
 
-function IntervalValuesTable({ values, unitType }: { values?: MetObsIntervalValueType[], unitType: UnitKey | null }) {
+function IntervalValuesTable({ values, unitType }: { values?: MetObsIntervalValueType[], unitType: UnitKey | undefined }) {
     if (!values || values.length === 0) return <p>No interval data</p>;
     if (!unitType) return <p>Undefined unit type</p>;
 
@@ -34,13 +34,12 @@ function IntervalValuesTable({ values, unitType }: { values?: MetObsIntervalValu
     );
 }
 
-export default function SheetInfo({ sheetOpen, setSheetOpen, station, samplingValueType, unitType }: {
+export default function SheetInfo({ sheetOpen, setSheetOpen, station }: {
     sheetOpen: boolean,
     setSheetOpen: Dispatch<SetStateAction<boolean>>,
     station: StationData | null,
-    samplingValueType: MetObsValueType | null
-    unitType: UnitKey | null
 }) {
+    const { unitType, samplingValueType } = useContext(UnitContext);
     if (!station || !samplingValueType) return null;
 
     return (

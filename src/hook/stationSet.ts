@@ -8,12 +8,12 @@ const MetObsStationSetSampleDataArray = array(MetObsStationSetSampleDataSchema);
 
 interface ActiveStationsResult {
     activeStations: StationData[];
-    samplingType: MetObsValueType | null;
+    samplingType: MetObsValueType | undefined;
 }
 
 interface NormalizedStationResult {
     stations: StationData[],
-    samplingType: MetObsValueType | null
+    samplingType: MetObsValueType | undefined
 }
 
 function isSamplingStation(station: StationData[] | StationData): station is MetObsStationSetSampleData[] {
@@ -30,12 +30,12 @@ function isSamplingStation(station: StationData[] | StationData): station is Met
 export function checkStationType(
     station?: StationData[] | StationData
 ): NormalizedStationResult {
-    if (!station) return { stations: [], samplingType: null };
+    if (!station) return { stations: [], samplingType: undefined };
 
     const normalizedStations = Array.isArray(station) ? station : [station];
 
     if (normalizedStations.length === 0) {
-        return { stations: [], samplingType: null };
+        return { stations: [], samplingType: undefined };
     }
 
     return {

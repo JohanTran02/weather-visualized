@@ -8,9 +8,9 @@ import L from 'leaflet';
 import { useContext, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useGetActiveStationSet } from '@/hook/stationSet';
 import { type StationData } from '@/types/station';
-import type { MetObsValueType } from '@/types/parameter';
 import { convertUnit, type UnitKey } from '@/utils/unit';
 import { ParameterContext } from '@/context/useParameterContext';
+import { UnitContext } from '@/context/useUnitContext';
 
 const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: number) => {
     const iconDiv = document.createElement('div');
@@ -32,11 +32,9 @@ const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: numb
 };
 
 // StationsLayer
-export const StationsLayer = ({ setSheetOpen, setStation, setSamplingValueType, setUnitType }: {
+export const StationsLayer = ({ setSheetOpen, setStation }: {
     setSheetOpen: Dispatch<SetStateAction<boolean>>,
     setStation: Dispatch<SetStateAction<StationData | null>>,
-    setSamplingValueType: Dispatch<SetStateAction<MetObsValueType | null>>,
-    setUnitType: Dispatch<SetStateAction<UnitKey | null>>,
 }) => {
     const { parameterId } = useContext(ParameterContext)
     const { data, status } = useQuery({
@@ -48,6 +46,7 @@ export const StationsLayer = ({ setSheetOpen, setStation, setSamplingValueType, 
         enabled: !!parameterId
     });
 
+    const { setUnitType, setSamplingValueType } = useContext(UnitContext);
     const { activeStations, samplingType } = useGetActiveStationSet(data?.station);
 
     const markers = useMemo(() => {
@@ -60,9 +59,7 @@ export const StationsLayer = ({ setSheetOpen, setStation, setSamplingValueType, 
                 icon={circleIcon(station, data?.parameter.unit)}
                 eventHandlers={{
                     click: () => {
-                        if (data?.parameter) {
-                            setUnitType(data.parameter.unit);
-                        }
+                        setUnitType(data?.parameter.unit);
                         setSamplingValueType(samplingType);
                         setStation(station);
                         setSheetOpen(true);
@@ -71,7 +68,7 @@ export const StationsLayer = ({ setSheetOpen, setStation, setSamplingValueType, 
             >
             </Marker>
         ));
-    }, [data?.parameter, samplingType, setSamplingValueType, setUnitType, activeStations, setSheetOpen, setStation]);
+    }, [data?.parameter.unit, samplingType, setSamplingValueType, setUnitType, activeStations, setSheetOpen, setStation]);
 
     if (status === "error") return <div>Error</div>;
     if (status === "pending") return <div>Loading...</div>;
