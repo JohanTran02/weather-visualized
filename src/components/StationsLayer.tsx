@@ -5,11 +5,12 @@ import { getStationSet } from '@/api/station'
 import { FeatureGroup, Marker, } from 'react-leaflet';
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from 'leaflet';
-import { useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useContext, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useGetActiveStationSet } from '@/hook/stationSet';
 import { type StationData } from '@/types/station';
 import type { MetObsValueType } from '@/types/parameter';
 import { convertUnit, type UnitKey } from '@/utils/unit';
+import { ParameterContext } from '@/context/useParameterContext';
 
 const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: number) => {
     const iconDiv = document.createElement('div');
@@ -31,13 +32,13 @@ const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: numb
 };
 
 // StationsLayer
-export const StationsLayer = ({ parameterId, setSheetOpen, setStation, setSamplingValueType, setUnitType }: {
-    parameterId: string,
+export const StationsLayer = ({ setSheetOpen, setStation, setSamplingValueType, setUnitType }: {
     setSheetOpen: Dispatch<SetStateAction<boolean>>,
     setStation: Dispatch<SetStateAction<StationData | null>>,
     setSamplingValueType: Dispatch<SetStateAction<MetObsValueType | null>>,
     setUnitType: Dispatch<SetStateAction<UnitKey | null>>,
 }) => {
+    const { parameterId } = useContext(ParameterContext)
     const { data, status } = useQuery({
         queryKey: ["stations", parameterId],
         queryFn: () => {
