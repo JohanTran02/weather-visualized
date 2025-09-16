@@ -11,6 +11,7 @@ import { type StationData } from '@/types/station';
 import { convertUnit, type UnitKey } from '@/utils/unit';
 import { ParameterContext } from '@/context/useParameterContext';
 import { UnitContext } from '@/context/useUnitContext';
+import { SheetContext } from '@/context/useSheetContext';
 
 const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: number) => {
     const iconDiv = document.createElement('div');
@@ -32,10 +33,10 @@ const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: numb
 };
 
 // StationsLayer
-export const StationsLayer = ({ setSheetOpen, setStation }: {
-    setSheetOpen: Dispatch<SetStateAction<boolean>>,
+export const StationsLayer = ({ setStation }: {
     setStation: Dispatch<SetStateAction<StationData | null>>,
 }) => {
+    const { open } = useContext(SheetContext);
     const { parameterId } = useContext(ParameterContext)
     const { data, status } = useQuery({
         queryKey: ["stations", parameterId],
@@ -62,13 +63,13 @@ export const StationsLayer = ({ setSheetOpen, setStation }: {
                         setUnitType(data?.parameter.unit);
                         setSamplingValueType(samplingType);
                         setStation(station);
-                        setSheetOpen(true);
+                        open();
                     }
                 }}
             >
             </Marker>
         ));
-    }, [data?.parameter.unit, samplingType, setSamplingValueType, setUnitType, activeStations, setSheetOpen, setStation]);
+    }, [data?.parameter.unit, samplingType, setSamplingValueType, setUnitType, activeStations, open, setStation]);
 
     if (status === "error") return <div>Error</div>;
     if (status === "pending") return <div>Loading...</div>;
