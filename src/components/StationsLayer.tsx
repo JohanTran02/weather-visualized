@@ -5,13 +5,14 @@ import { getStationSet } from '@/api/station'
 import { FeatureGroup, Marker, } from 'react-leaflet';
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from 'leaflet';
-import { useContext, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useContext, useMemo } from 'react';
 import { useGetActiveStationSet } from '@/hook/stationSet';
 import { type StationData } from '@/types/station';
 import { convertUnit, type UnitKey } from '@/utils/unit';
 import { ParameterContext } from '@/context/useParameterContext';
 import { UnitContext } from '@/context/useUnitContext';
 import { SheetContext } from '@/context/useSheetContext';
+import { StationContext } from '@/context/useStationContext';
 
 const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: number) => {
     const iconDiv = document.createElement('div');
@@ -33,9 +34,8 @@ const circleIcon = (station: StationData, unit: UnitKey | undefined, size?: numb
 };
 
 // StationsLayer
-export const StationsLayer = ({ setStation }: {
-    setStation: Dispatch<SetStateAction<StationData | null>>,
-}) => {
+export const StationsLayer = () => {
+    const { setStation } = useContext(StationContext);
     const { open } = useContext(SheetContext);
     const { parameterId } = useContext(ParameterContext)
     const { data, status } = useQuery({
