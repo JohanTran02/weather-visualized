@@ -4,11 +4,11 @@ import {
 import { getParameters } from '@/api/version';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { SelectGroup } from '@radix-ui/react-select';
-import { type Dispatch, type SetStateAction } from 'react';
+import { useContext } from 'react';
+import { ParameterContext } from '@/context/useParameterContext';
 
-export function ParameterList({ parameterId, setParameterId }: {
-    parameterId: string, setParameterId: Dispatch<SetStateAction<string>>,
-}) {
+export function ParameterList() {
+    const { parameterId, setParameterId } = useContext(ParameterContext);
     const parametersQuery = useQuery({
         queryKey: ["parameters"],
         queryFn: getParameters
