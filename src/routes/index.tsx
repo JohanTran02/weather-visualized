@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet'
 import { StationsLayer } from '@/components/StationsLayer'
-import { ParameterList } from '@/components/ParameterList'
+import { ParameterSelect } from '@/components/ParameterSelect'
 import SheetInfo from "@/components/SheetInfo";
 import { UnitProvider } from "@/context/useUnitContext";
 import { ParameterProvider } from "@/context/useParameterContext";
@@ -20,7 +20,7 @@ function HomeComponent() {
           <StationProvider>
             <div className='relative h-screen w-screen'>
               <SheetInfo />
-              <ParameterList />
+              <ParameterSelect />
               <MapContainer className="z-0" bounds={[[55, 10], [70, 25]]} zoom={13} scrollWheelZoom={false} zoomControl={false} style={{ height: '100vh', width: '100%' }}>
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
