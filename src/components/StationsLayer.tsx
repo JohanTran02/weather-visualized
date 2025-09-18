@@ -35,7 +35,7 @@ export const StationsLayer = () => {
     if (status === "pending") return <div>Loading...</div>;
 
     return (
-        <MarkerClusterGroup>
+        <MarkerClusterGroup key={parameterId}>
             <Stations stations={data} />
         </MarkerClusterGroup>
     );
