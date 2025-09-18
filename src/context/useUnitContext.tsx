@@ -1,27 +1,38 @@
 import type { MetObsValueType } from "@/types/parameter";
 import type { UnitKey } from "@/utils/unit";
-import { createContext, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
+import { createContext, type ReactNode } from "react";
+import { Parameter, useParameter } from "./useParameterContext";
+
+type ParameterResponse = {
+    unit: UnitKey | undefined;
+    valueType: MetObsValueType | undefined;
+};
+
+const selectUnitAndType = (data: ParameterResponse) => ({
+    unit: data.unit,
+    valueType: data.valueType,
+});
+
+function useParameterValues(parameterId: string) {
+    return useParameter(parameterId, selectUnitAndType);
+}
 
 type UnitContextType = {
     unitType: UnitKey | undefined,
     samplingValueType: MetObsValueType | undefined,
-    setUnitType: Dispatch<SetStateAction<UnitKey | undefined>>,
-    setSamplingValueType: Dispatch<SetStateAction<MetObsValueType | undefined>>,
 }
 
 export const UnitContext = createContext<UnitContextType>({
     unitType: undefined,
     samplingValueType: undefined,
-    setUnitType: () => { },
-    setSamplingValueType: () => { }
 });
 
 export const UnitProvider = ({ children }: { children: ReactNode }) => {
-    const [unitType, setUnitType] = useState<UnitKey | undefined>(undefined);
-    const [samplingValueType, setSamplingValueType] = useState<MetObsValueType | undefined>(undefined)
+    const parameterId = Parameter();
+    const { data } = useParameterValues(parameterId);
 
     return (
-        <UnitContext.Provider value={{ unitType, samplingValueType, setUnitType, setSamplingValueType }}>
+        <UnitContext.Provider value={{ unitType: data?.unit, samplingValueType: data?.valueType }}>
             {children}
         </UnitContext.Provider>
     )

@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "./ui/sheet";
 import type { MetObsIntervalValueType, MetObsSampleValueType } from "@/types/station";
-import { convertUnit, type UnitKey } from "@/utils/unit";
+import { convertUnit } from "@/utils/unit";
 import { UnitContext } from "@/context/useUnitContext";
 import { SheetContext } from "@/context/useSheetContext";
-import { StationContext } from "@/context/useStationContext";
+import { useStation } from "@/context/useStationContext";
 
-function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueType[], unitType: UnitKey | undefined }) {
+function SamplingValuesTable({ values }: { values?: MetObsSampleValueType[] }) {
+    const { unitType } = useContext(UnitContext);
+
     if (!values || values.length === 0) return <p>No sampling data</p>;
     if (!unitType) return <p>Undefined unit type</p>;
 
@@ -21,7 +23,9 @@ function SamplingValuesTable({ values, unitType }: { values?: MetObsSampleValueT
     );
 }
 
-function IntervalValuesTable({ values, unitType }: { values?: MetObsIntervalValueType[], unitType: UnitKey | undefined }) {
+function IntervalValuesTable({ values, }: { values?: MetObsIntervalValueType[] }) {
+    const { unitType } = useContext(UnitContext);
+
     if (!values || values.length === 0) return <p>No interval data</p>;
     if (!unitType) return <p>Undefined unit type</p>;
 
@@ -38,8 +42,9 @@ function IntervalValuesTable({ values, unitType }: { values?: MetObsIntervalValu
 
 export default function SheetInfo() {
     const { sheetOpen, setSheetOpen } = useContext(SheetContext);
-    const { unitType, samplingValueType } = useContext(UnitContext);
-    const { station } = useContext(StationContext);
+    const { samplingValueType } = useContext(UnitContext);
+    const station = useStation();
+
     if (!station || !samplingValueType) return null;
 
     return (
@@ -54,9 +59,9 @@ export default function SheetInfo() {
                 </SheetHeader>
                 {
                     samplingValueType === "SAMPLING" ? (
-                        <SamplingValuesTable values={station.value as MetObsSampleValueType[]} unitType={unitType} />
+                        <SamplingValuesTable values={station.value as MetObsSampleValueType[]} />
                     ) : (
-                        <IntervalValuesTable values={station.value as MetObsIntervalValueType[]} unitType={unitType} />
+                        <IntervalValuesTable values={station.value as MetObsIntervalValueType[]} />
                     )
                 }
                 <SheetFooter>Based on data from SMHI</SheetFooter>
