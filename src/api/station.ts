@@ -2,7 +2,7 @@
 import { MetObsStationSetDataTypeSchema } from '@/schemas/station';
 import * as v from 'valibot'
 
-type MetObsStationSetDataType = v.InferOutput<typeof MetObsStationSetDataTypeSchema>;
+export type MetObsStationSetDataType = v.InferOutput<typeof MetObsStationSetDataTypeSchema>;
 
 export const getStationSet = async (parameterId: string): Promise<MetObsStationSetDataType> => {
     try {
