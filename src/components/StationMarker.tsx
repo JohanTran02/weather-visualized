@@ -2,12 +2,14 @@ import { SheetContext } from "@/context/useSheetContext";
 import { useStationDispatch } from "@/context/useStationContext";
 import { UnitContext } from "@/context/useUnitContext";
 import type { StationData } from "@/types/station";
-import { type UnitKey, convertUnit } from "@/utils/unit";
+import { convertUnit } from "@/utils/unit";
 import L from "leaflet";
 import { useCallback, useContext, useMemo } from "react";
 import { Marker } from "react-leaflet";
 
-const useCircleIcon = (station: StationData, unit: UnitKey | undefined, size?: number) => {
+const useIcon = (station: StationData, size?: number) => {
+    const { unitType } = useContext(UnitContext);
+
     return useMemo(() => {
         const iconDiv = document.createElement('div');
         const iconStationName = document.createElement('p');
@@ -16,7 +18,7 @@ const useCircleIcon = (station: StationData, unit: UnitKey | undefined, size?: n
 
         iconDiv.className = "flex flex-col items-center justify-center text-nowrap hover:underline font-semibold";
         iconStationName.textContent = station.name;
-        iconStationValue.textContent = `${unit && convertUnit(station.value[0].value, unit)}`;
+        iconStationValue.textContent = `${unitType && convertUnit(station.value[0].value, unitType)}`;
 
         iconDiv.append(iconStationName, iconStationValue);
 
@@ -25,14 +27,13 @@ const useCircleIcon = (station: StationData, unit: UnitKey | undefined, size?: n
             className: "",
             iconSize: size ? [size, size] : undefined,
         })
-    }, [unit, station, size])
+    }, [unitType, station, size])
 };
 
 export default function StationMarker({ station }: { station: StationData }) {
-    const { unitType } = useContext(UnitContext);
     const setStation = useStationDispatch();
     const { open } = useContext(SheetContext);
-    const icon = useCircleIcon(station, unitType);
+    const icon = useIcon(station);
 
     const setSheetInfo = useCallback(() => {
         setStation(station);
