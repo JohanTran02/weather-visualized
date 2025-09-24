@@ -1,13 +1,13 @@
 import { SheetContext } from "@/context/useSheetContext";
 import { useStationDispatch } from "@/context/useStationContext";
 import { UnitContext } from "@/context/useUnitContext";
-import type { StationData } from "@/types/station";
+import type { StationSetData } from "@/types/station";
 import { convertUnit } from "@/utils/unit";
 import L from "leaflet";
 import { useCallback, useContext, useMemo } from "react";
 import { Marker } from "react-leaflet";
 
-const useIcon = (station: StationData, size?: number) => {
+const useIcon = (station: StationSetData, size?: number) => {
     const { unitType } = useContext(UnitContext);
 
     return useMemo(() => {
@@ -30,7 +30,7 @@ const useIcon = (station: StationData, size?: number) => {
     }, [unitType, station, size])
 };
 
-export default function StationMarker({ station }: { station: StationData }) {
+export default function StationMarker({ station }: { station: StationSetData }) {
     const setStation = useStationDispatch();
     const { open } = useContext(SheetContext);
     const icon = useIcon(station);
@@ -48,7 +48,7 @@ export default function StationMarker({ station }: { station: StationData }) {
             eventHandlers={{ click: setSheetInfo }}
         >
         </Marker>
-    }, [setSheetInfo, icon, station])
+    }, [setSheetInfo, icon, station.key, station.latitude, station.longitude])
 
     return marker
 }

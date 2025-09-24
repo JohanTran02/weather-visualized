@@ -94,7 +94,7 @@ export const MetObsStationSetIntervalDataSchema = v.intersect([
     })
 ])
 
-export const StationSchema = v.union([MetObsStationSetSampleDataSchema, MetObsStationSetIntervalDataSchema]);
+export const StationSetSchema = v.union([MetObsStationSetSampleDataSchema, MetObsStationSetIntervalDataSchema]);
 
 const SMHIBaseStationParameterData = v.object({
     key: v.string(),
@@ -120,7 +120,7 @@ const SMHIBaseStationData = v.object({
 
 export const MetObsStationSetDataTypeSchema = v.object({
     ...SMHIBaseStationData.entries,
-    station: v.array(StationSchema),
+    station: v.array(StationSetSchema),
 });
 
 // https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station/188790/period/latest-hour/data.json //metObsDataType metObsSampleData or metObsIntervalData
@@ -149,3 +149,5 @@ export const MetObsStationIntervalDataSchema = v.intersect([
         value: v.array(MetObsIntervalValueTypeSchema)
     })
 ]);
+
+export const StationSchema = v.union([MetObsStationSampleDataSchema, MetObsStationIntervalDataSchema]);
