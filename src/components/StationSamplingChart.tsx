@@ -5,7 +5,7 @@ import type { MetObsSampleValueType } from "@/types/station";
 import { unit } from "@/utils/unit";
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
-import { type TooltipContentProps, CartesianGrid, XAxis, YAxis, Tooltip, Line, LineChart } from "recharts";
+import { type TooltipContentProps, CartesianGrid, XAxis, YAxis, Tooltip, Line, LineChart, ResponsiveContainer, Label } from "recharts";
 import type { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 
 function useStationValues(stationId: string) {
@@ -25,7 +25,7 @@ interface StationSamplingChartData {
 }
 
 /**
- * Converts the data to display on charts
+ * Converts the sampling data to display on charts
  * @return {StationSamplingChartData[]} 
  */
 function convertValues(values: MetObsSampleValueType[]): StationSamplingChartData[] {
@@ -73,7 +73,7 @@ interface CustomTooltipContentProps extends TooltipContentProps<ValueType, NameT
 const CustomTooltip = ({ active, payload, label }: CustomTooltipContentProps) => {
     const { unitType } = useContext(UnitContext);
     const isVisible = active && payload && payload.length && unitType;
-    const date = convertToLocaleDate({ input: label?.toString() as string });
+    const date = convertToLocaleDate({ input: label?.toString() as string, locale: "sv-SE" });
     return (
         <div className="custom-tooltip bg-white border-2 text-center p-2">
             {isVisible && (
@@ -99,25 +99,23 @@ export default function StationSamplingChart({ stationId }: { stationId: string 
     const values = convertValues(data.value as MetObsSampleValueType[]);
 
     return (
-        <LineChart
-            width={500}
-            height={300}
-            data={values}
-            margin={{
-                top: 10,
-                right: 10,
-                bottom: 10,
-                left: 10
-            }}
-        >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" tickFormatter={(string: Date) => {
-                const date = convertToLocaleDate({ input: string, locale: "sv-SE", format: { hour: '2-digit', minute: '2-digit' } });
-                return date
-            }} />
-            <YAxis unit={unit[unitType]} />
-            <Tooltip content={CustomTooltip} />
-            <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
-        </LineChart>
+        <ResponsiveContainer height={300} width="100%">
+            <LineChart
+                data={values}
+                margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+            >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" tickFormatter={(string: Date) => {
+                    const date = convertToLocaleDate({ input: string, locale: "sv-SE", format: { hour: '2-digit', minute: '2-digit' } });
+                    return date
+                }} >
+                    <Label value='Based on data from SMHI' offset={0} position={"insideBottom"} dy={10} />
+                </XAxis>
+                <YAxis unit={unit[unitType]} />
+                <Tooltip content={CustomTooltip} />
+                <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+            </LineChart>
+        </ResponsiveContainer>
+
     );
 }
